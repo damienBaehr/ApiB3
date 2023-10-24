@@ -17,6 +17,4 @@ router.get("/", userController.getAllUsers);
 // Route pour s'authentifier
 router.post("/auth", userController.authentification);
 
-// router.get("/auth", userController.postLoginAndPasswordquirenvoieunJWT);
-
 module.exports = router;

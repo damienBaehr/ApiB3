@@ -1,5 +1,8 @@
 const conn = require('../services/db')
 const jwt = require('jsonwebtoken');
+const dotenv = require('dotenv');
+
+dotenv.config({ path: '.env.local' });
 const tokenKey = process.env.TOKEN_KEY;
 
 console.log(tokenKey);
@@ -45,7 +48,7 @@ exports.authentification = (req, res) => {
       console.error("Erreur lors de l'authentification", err);
       res.status(500).json({ error: "Erreur lors de l'authentification" });
     } else if (result.length > 0) {
-      const token = jwt.sign({ id: result[0].id }, tokenKey, { expiresIn: "24h" }, { algorithm: 'RS256' });
+      const token = jwt.sign({ id: result[0].id }, tokenKey, { expiresIn: "24h" }, {algorithm: 'RS256'});
       res.status(200).json({ message: "Authentification réussie", token: token, data: result });
     } else {
       res.status(401).json({ message: "Authentification échouée" });

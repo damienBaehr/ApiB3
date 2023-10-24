@@ -1,16 +1,16 @@
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 
+
 dotenv.config({path : '.env.local'})
 const tokenKey = process.env.TOKEN_KEY;
 
 console.log(tokenKey)
 
-
-
 const verifyToken = (req, res, next) => {
   const token = req.headers.authorization;
-  if (req.originalUrl === '/auth') {
+  console.log(req.originalUrl)
+  if (req.originalUrl === '/user/auth') {
     return next();
   }
   if (!token) {
