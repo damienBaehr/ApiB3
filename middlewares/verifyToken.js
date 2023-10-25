@@ -5,13 +5,10 @@ const dotenv = require('dotenv');
 dotenv.config({path : '.env.local'})
 const tokenKey = process.env.TOKEN_KEY;
 
-console.log(tokenKey)
-
 const verifyToken = (req, res, next) => {
   const token = req.headers.authorization;
-  console.log(req.originalUrl)
   if (req.originalUrl === '/user/auth') {
-    return next();
+    next();
   }
   if (!token) {
     return res.status(401).json({ message: 'Token non fourni' });
@@ -20,7 +17,7 @@ const verifyToken = (req, res, next) => {
     if (err) {
       return res.status(401).json({ message: 'Token invalide' });
     }
-    next(); // Passer au middleware suivant ou à la route
+    next();
   });
 };
 

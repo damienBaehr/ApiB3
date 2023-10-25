@@ -5,37 +5,28 @@ class Message {
       this.text = null;
       this.id_discussion = null;
     }
-  
-    // Getter et Setter pour l'ID
-    getID() {
-      return this.id;
+    
+    static fromMap(map){
+      let message = new Message();
+      message.date = map.date;
+      message.text = map.text;
+      message.id_discussion = map.id_discussion;
+        
+      return message;
     }
-    setID(id) {
-      this.id = id;
+
+    toMap(){
+      return {
+        id: this.id,
+        date: this.date,
+        text: this.text,
+        id_discussion: this.id_discussion
+      }
     }
-  
-    // Getter et Setter pour la date
-    getDate() {
-      return this.date;
-    }
-    setDate(date) {
-      this.date = date;
-    }
-  
-    // Getter et Setter pour le texte
-    getText() {
-      return this.text;
-    }
-    setText(text) {
-      this.text = text;
-    }
-  
-    // Getter et Setter pour l'ID de la discussion
-    getDiscussionID() {
-      return this.id_discussion;
-    }
-    setDiscussionID(id_discussion) {
-      this.id_discussion = id_discussion;
+    //Créer une date quand la méthode est appelée
+
+    messageDate(){
+      this.date = new Date();
     }
   }
   

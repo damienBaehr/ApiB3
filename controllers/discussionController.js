@@ -1,27 +1,35 @@
 const conn = require('../services/db')
+const Discussion = require('../models/discussion');
 
 
 // Contrôleur pour créer une discussion
 exports.createDiscussion = (req, res) => {
   const id_user = req.get("X-UserID");
   const id_personnage = req.get("X-CharacterID");
-  const { name, description, imgUrl } = req.body;
-  const sql =
-    "INSERT INTO discussion (name, description, imgUrl, id_personnage, id_user) VALUES (?, ?, ?, ?, ?)";
-  const values = [name, description, imgUrl, id_personnage, id_user];
+
+  let discussion = Discussion.fromMap(req.body);
+  discussion.generateDescription();
+
+  const sql ="INSERT INTO discussion (name, description, imgUrl, id_personnage, id_user) VALUES (?, ?, ?, ?, ?)";
+
+  const values = [discussion.name, discussion.description, discussion.imgUrl, id_personnage, id_user];
+
   conn.query(sql, values, (err, result) => {
     if (err || result.length <= 0) {
       console.error("Erreur lors de l'insertion de la discussion", err);
       res
         .status(500)
-        .json({ error: "Erreur lors de la création de la discussion" });
+        .json({ error: "Erreur lors de la création de la discussion", err});
     } else {
-      res.status(201).json({ discussion: result});
+      discussion.id = result.insertId;
+      discussion.id_personnage = id_personnage;
+      discussion.id_user = id_user;
+      res.status(201).json({ discussion: discussion.toMap()});
     }
   });
 };
 exports.getDiscussion = (req, res) => {
-  const sql = "SELECT discussion.id as idDiscussion ,personnage.id as idPersonnage, univers.id as idUnivers, discussion.name FROM discussion JOIN personnage ON discussion.id_personnage = personnage.id JOIN univers ON personnage.univers_id = univers.id";
+  const sql = " SELECT discussion.id as idDiscussion ,personnage.id as idPersonnage, univers.id as idUnivers, discussion.name FROM discussion JOIN personnage ON discussion.id_personnage = personnage.id JOIN univers ON personnage.univers_id = univers.id";
   conn.query(sql, (err, results) => {
     if (err) {
       console.error("Erreur lors de la récupération des discussions", err);
@@ -67,19 +75,12 @@ exports.deleteDiscussion = (req, res) => {
   conn.query(sql, [discussionID], (err, result) => {
     if (err) {
       console.error("Erreur lors de la suppression de la discussion", err);
-      res
-        .status(500)
-        .json({ error: "Erreur lors de la suppression de la discussion" });
+      res.status(500).json({ error: "Erreur lors de la suppression de la discussion" });
     } else {
-      // Vérifiez si des enregistrements ont été affectés par la suppression
       if (result.affectedRows > 0) {
-        res
-          .status(200)
-          .json({ message: "La discussion a été supprimée avec succès" });
+        res.status(200).json({ message: "La discussion a été supprimée avec succès" });
       } else {
-        res
-          .status(404)
-          .json({ error: "La discussion avec l'ID spécifié n'a pas été trouvée" });
+        res.status(404).json({ error: "La discussion avec l'ID spécifié n'a pas été trouvée" });
       }
     }
   });

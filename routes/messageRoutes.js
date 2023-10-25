@@ -3,9 +3,9 @@ const router = express.Router();
 const messageController = require("../controllers/messageController");
 
 // Route pour récupérer un message par l'ID de la discussion
-router.get("/", messageController.getMessagesByDiscussion);
+router.get("/:id", messageController.getMessagesByDiscussion);
 
-// Route pour récupérer créer un message
-router.get("/", messageController.createMessageByUniverses);
+// Route pour créer un message
+router.post("/:id", messageController.createMessageByUniverses);
 
 module.exports = router;

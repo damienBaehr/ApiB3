@@ -1,23 +1,23 @@
 const conn = require('../services/db')
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
+const User = require('../models/user');
 
 dotenv.config({ path: '.env.local' });
 const tokenKey = process.env.TOKEN_KEY;
 
-console.log(tokenKey);
-
 // Contrôleur pour créer un utilisateur
 exports.createUser = (req, res) => {
-  const { pseudo, password, email } = req.body;
+  let user = User.fromMap(req.body);  
   const sql = "INSERT INTO user (pseudo, password, email) VALUES (?, ?, ?)";
-  const values = [pseudo, password, email];
+  const values = [user._pseudo, user._password, user._email];
   conn.query(sql, values, (err, result) => {
     if (err) {
       console.error("Erreur lors de l'insertion du user", err);
       res.status(500).json({ error: "Erreur lors de la création du user" });
     } else {
-      res.status(201).json({ message: "Utilisateur créé avec succès", data: result });
+      user._id = result.insertId;
+      res.status(201).json({ message: "Utilisateur créé avec succès !", Créé: user.toMap()});
     }
   });
 };
@@ -25,31 +25,47 @@ exports.createUser = (req, res) => {
 // Controller pour update un utilisateur
 exports.updateUser = (req, res) => {
   const userID = parseInt(req.params.id);
-  const { pseudo, password, email } = req.body;
-  const sql = "UPDATE user SET pseudo = ?, password = ?, email = ? WHERE id = ?";
-  const values = [pseudo, password, email, userID];
-  conn.query(sql, values, (err, result) => {
+  let user = User.fromMap(req.body); 
+
+  const columns = [];
+  const values = [];
+
+  if (user._pseudo) {
+    columns.push("pseudo = ?");
+    values.push(user.pseudo);
+  }
+  if (user._password) {
+    columns.push("password = ?");
+    values.push(user.password);
+  }
+  if (user._email) {
+    columns.push("email = ?");
+    values.push(user.email);
+  }
+
+  let sql = "UPDATE user SET " + columns.join(", ") + " WHERE id = ?";
+  values.push(userID);
+
+  conn.query(sql, values, (err) => {
     if (err) {
-      console.error("Erreur lors de la mise à jour du user", err);
       res.status(500).json({ error: "Erreur lors de la mise à jour du user" });
     } else {
-      res.status(200).json({ message: "Utilisateur mis à jour avec succès", data: result });
+      res.status(200).json({ message: "Utilisateur mis à jour avec succès", data: user.toMap() });
     }
   });
 };
 
 // Controller pour s'authentifier en tant qu'utilisateur, et récupérer un token
 exports.authentification = (req, res) => {
-  const { pseudo, password } = req.body;
+  let user = User.fromMap(req.body);
   const sql = "SELECT * FROM user WHERE pseudo = ? AND password = ?";
-  const values = [pseudo, password];
+  const values = [user._pseudo, user._password];
   conn.query(sql, values, (err, result) => {
     if (err) {
-      console.error("Erreur lors de l'authentification", err);
       res.status(500).json({ error: "Erreur lors de l'authentification" });
     } else if (result.length > 0) {
       const token = jwt.sign({ id: result[0].id }, tokenKey, { expiresIn: "24h" }, {algorithm: 'RS256'});
-      res.status(200).json({ message: "Authentification réussie", token: token, data: result });
+      res.status(200).json({ message: "Authentification réussie", Token: token, Utilisateur : user.toMap() });
     } else {
       res.status(401).json({ message: "Authentification échouée" });
     }
@@ -62,7 +78,6 @@ exports.getUserById = (req, res) => {
   const sql = "SELECT * FROM user WHERE id = ?";
   conn.query(sql, [userID], (err, result) => {
     if (err) {
-      console.error("Erreur lors de l'exécution de la requête SELECT", err);
       res.status(500).json({ error: "Erreur lors de la récupération de l'utilisateur" });
     } else {
       res.status(200).json({ user: result[0] });
@@ -73,13 +88,12 @@ exports.getUserById = (req, res) => {
 
 // Contrôleur pour récupérer tous les utilisateurs
 exports.getAllUsers = (req, res) => {
-  conn.query("SELECT * FROM user", (err, rows, result) => {
+  conn.query("SELECT * FROM user", (err, rows,) => {
     if (err || rows.length === 0) {
-      console.error("Erreur lors de l'exécution de la requête SELECT", err);
       res.status(500).json({ error: "Erreur lors de la récupération des utilisateurs" });
     } else {
-      res.status(200).json({ result });
-      console.log(result);
+      const user = rows.map((row) => row);
+      res.status(200).json({ user });
     }
   });
 };

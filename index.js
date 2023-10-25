@@ -8,14 +8,16 @@ const userRoutes = require("./routes/userRoutes");
 const universesRoutes = require("./routes/universesRoutes");
 const discussionRoutes = require("./routes/discussionRoutes");
 const characterRoutes = require("./routes/characterRoutes");
-const verifyToken = require("./middlewares/verifyToken");
+const messageRoutes = require("./routes/messageRoutes")
+// const verifyToken = require("./middlewares/verifyToken"); A DECOMMENTER !!!!!!!!!!!
 
 // Utilisation des routes
-app.use(verifyToken); // middleware pour vérifier le token
+// app.use(verifyToken); // middleware pour vérifier le token  A DECOMMENTER !!!!!!!!!!!
 app.use("/user", userRoutes); // préfixe "/user" pour les routes des utilisateurs
 app.use("/universes", universesRoutes); // préfixe "/universes" pour les routes des univers
 app.use("/discussion", discussionRoutes); // préfixe "/discussion" pour les routes des discussions
 app.use("/character", characterRoutes); // préfixe /character pour les routes des characters
+app.use("/message", messageRoutes); // préfixe /message pour les routes des messages
 
 app.listen(8080, () => {
   console.log("Server running on port 8080!");
