@@ -1,24 +1,31 @@
-const conn = require('../services/db')
-const Universe = require('../models/universes')
+const conn = require('../services/db');
+const Universe = require('../models/universes');
 
 // Contrôleur pour créer un univers
-exports.createUniverse = (req, res) => {
-  let universe = Universe.fromMap(req.body);
-  universe.generateDescription();
-
+exports.createUniverse = async (req, res) => {
   const id_user = req.get("X-UserID");
-  
-  const sql = "INSERT INTO univers (name, description, imgPathUrl, id_user) VALUES (?, ?, ?, ?)";
-  const values = [universe.name, universe.description, universe.imgPathUrl, id_user];
- 
-  conn.query(sql, values, (err, result) => {
-    if (err) {
-      res.status(500).json({ error: "Erreur lors de la création de l'univers", err });
-    } else {
-      universe.id = result.insertId;
-      res.status(201).json(universe.toMap());
-    }
-  });
+  let universe = Universe.fromMap(req.body);
+
+  try {
+    await universe.generateDescription();
+    await universe.generateImage();
+
+    console.log("Test description", universe.description);
+    const sql = "INSERT INTO univers (name, description, imgPathUrl, id_user) VALUES (?, ?, ?, ?)";
+
+    const values = [universe.name, universe.description, universe.imgPathUrl, id_user];
+
+    conn.query(sql, values, (err, result) => {
+      if (err) {
+        res.status(500).json({ error: "Erreur lors de la création de l'univers", err });
+      } else {
+        universe.id = result.insertId;
+        res.status(201).json(universe.toMap());
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Erreur lors de la génération de la description", error });
+  }
 };
 
 // Contrôleur pour récupérer tous les univers

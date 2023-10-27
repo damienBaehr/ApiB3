@@ -8,7 +8,7 @@ const tokenKey = process.env.TOKEN_KEY;
 const verifyToken = (req, res, next) => {
   const token = req.headers.authorization;
   if (req.originalUrl === '/user/auth') {
-    next();
+    return next();
   }
   if (!token) {
     return res.status(401).json({ message: 'Token non fourni' });

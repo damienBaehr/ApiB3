@@ -1,5 +1,5 @@
-const conn = require('../services/db');
-const Character = require('../models/character');
+const conn = require("../services/db");
+const Character = require("../models/character");
 
 // Contrôleur pour récupérer tous les personnages d'un univers
 exports.getCharactersByUniverse = (req, res) => {
@@ -10,9 +10,7 @@ exports.getCharactersByUniverse = (req, res) => {
   conn.query(sql, values, (err, results) => {
     if (err) {
       console.error("Erreur lors de la récupération des personnages", err);
-      res
-        .status(500)
-        .json({ error: "Erreur lors de la récupération des personnages" });
+      res.status(500).json({ error: "Erreur lors de la récupération des personnages" });
     } else if (results.length > 0) {
       res.status(200).json({ characters: results });
     } else {
@@ -24,30 +22,34 @@ exports.getCharactersByUniverse = (req, res) => {
 };
 
 // Contrôleur pour créer un personnage
-exports.createCharacter = (req, res) => {
-  let character = Character.fromMap(req.body);
-  character.generateDescription();
-
+exports.createCharacter = async (req, res) => {
   const id_user = req.get("X-UserID");
   const univers_id = req.get("X-UniversID");
 
-  const sql = "INSERT INTO personnage (name, description, imgPathUrl, univers_id, id_user) VALUES ( ?, ?, ?, ?, ?)";
-  const values = [character._name, character._description, character._imgPathUrl, univers_id, id_user];
+  try {
+    let character = Character.fromMap(req.body);
+    await character.generateDescription();
+    await character.generateImage();
+    const sql ="INSERT INTO personnage (name, description, imgPathUrl, univers_id, id_user) VALUES ( ?, ?, ?, ?, ?)";
+    const values = [character._name, character._description, character._imgPathUrl, univers_id, id_user];
 
-  conn.query(sql, values, (err, result) => {
-    if (err || result.length <= 0) {
-      res.status(500).json({ error: "Erreur lors de la création du personnage", err });
-    } else {
-      character._id = result.insertId;
-      res.status(201).json({ character: character.toMap() });
-    }
-  });
+    conn.query(sql, values, (err, result) => {
+      if (err || result.length <= 0) {
+        res.status(500).json({ error: "Erreur lors de la création du personnage", err });
+      } else {
+        character._id = result.insertId;
+        res.status(201).json({ character: character.toMap() });
+      }
+    });
+  } catch {
+    res.status(500).json({error: "Erreur lors de la génération de la description du personnage"});
+  }
 };
 
 // Contrôleur pour mettre à jour un personnage
 exports.updateCharacter = (req, res) => {
   const universId = req.params.id;
-  let character = Character.fromMap(req.body);  
+  let character = Character.fromMap(req.body);
   const columns = [];
   const values = [];
 
@@ -71,12 +73,19 @@ exports.updateCharacter = (req, res) => {
   values.push(universId);
   conn.query(sql, values, (err, result) => {
     if (err) {
-      res.status(500).json({ error: "Erreur lors de la mise à jour de l'univers" });
+      res
+        .status(500)
+        .json({ error: "Erreur lors de la mise à jour de l'univers" });
     } else {
       if (result.affectedRows > 0) {
         res.status(200).json(character.toMap());
       } else {
-        res.status(404).json({ error: "L'univers avec l'ID spécifié n'a pas été trouvé", err });
+        res
+          .status(404)
+          .json({
+            error: "L'univers avec l'ID spécifié n'a pas été trouvé",
+            err,
+          });
       }
     }
   });
@@ -88,13 +97,21 @@ exports.deleteCharacter = (req, res) => {
   const sql = "DELETE FROM personnage WHERE id = ?";
   conn.query(sql, [characterId], (err, result) => {
     if (err) {
-      res.status(500).json({ error: "Erreur lors de la suppression du personnage" });
+      res
+        .status(500)
+        .json({ error: "Erreur lors de la suppression du personnage" });
     } else {
       // Vérifiez si des enregistrements ont été affectés par la suppression
       if (result.affectedRows > 0) {
-        res.status(200).json({ message: "Le personnage a été supprimé avec succès" });
+        res
+          .status(200)
+          .json({ message: "Le personnage a été supprimé avec succès" });
       } else {
-        res.status(404).json({ error: "Le personnage avec l'ID spécifié n'a pas été trouvé" });
+        res
+          .status(404)
+          .json({
+            error: "Le personnage avec l'ID spécifié n'a pas été trouvé",
+          });
       }
     }
   });
