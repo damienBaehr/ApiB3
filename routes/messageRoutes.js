@@ -6,6 +6,6 @@ const messageController = require("../controllers/messageController");
 router.get("/:id", messageController.getMessagesByDiscussion);
 
 // Route pour créer un message
-router.post("/:id", messageController.createMessageByUniverses);
+router.post("/:id", messageController.createMessageByDiscussion);
 
 module.exports = router;

@@ -32,7 +32,7 @@ exports.createCharacter = async (req, res) => {
     await character.generateImage();
     const sql ="INSERT INTO personnage (name, description, imgPathUrl, univers_id, id_user) VALUES ( ?, ?, ?, ?, ?)";
     const values = [character._name, character._description, character._imgPathUrl, univers_id, id_user];
-
+    
     conn.query(sql, values, (err, result) => {
       if (err || result.length <= 0) {
         res.status(500).json({ error: "Erreur lors de la création du personnage", err });

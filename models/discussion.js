@@ -34,7 +34,7 @@ class Discussion {
     }
 
     async generateDescription(){
-      const prompt = `Génère moi une description pour une discussion, qui a "${this.id_personnage}" comme personnage, et qui est dans l'univers de Tintin}`;
+      const prompt = `Génère moi une description pour une discussion, qui a "${this.id_personnage}" comme personnage. La discussion peut-être dans l'univers d'une série, ou d'un film, ou d'un jeu vidéo. La discussion s'appelle : "${this.name}`;
       let response = await generateDescription(prompt);
       
       console.log("Test response", response);
@@ -42,8 +42,8 @@ class Discussion {
 
     }
     async generateImage(){
-      const prompt = `Génère moi un background pour le fond d'une discussion mobile. Il faut que ça reste simple, pas trop tape à l'oeil. La discussion s'appelle : "${this._name}"}.`;
-      const imageName = "bgDiscussion_" + this._name + "_image";
+      const prompt = `Génère moi un background pour le fond d'une discussion mobile. Il faut que ça reste simple, pas trop tape à l'oeil. La discussion s'appelle : "${this.name}"}.`;
+      const imageName = "bgDiscussion_" + this.name + "_image";
       const response = await generateImage(imageName, prompt);
       this.imgUrl = response ? response : "PATH FOIREUX";
     }
