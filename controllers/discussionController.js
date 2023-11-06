@@ -25,9 +25,7 @@ exports.createDiscussion = async (req, res) => {
     conn.query(sql, values, (err, result) => {
       if (err || result.length <= 0) {
         console.error("Erreur lors de l'insertion de la discussion", err);
-        res
-          .status(500)
-          .json({ error: "Erreur lors de la création de la discussion", err });
+        res.status(500).json({ error: "Erreur lors de la création de la discussion", err });
       } else {
         discussion.id = result.insertId;
         discussion.id_personnage = id_personnage;

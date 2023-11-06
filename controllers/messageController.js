@@ -1,6 +1,7 @@
-const conn = require("../services/db");
+const conn = require("../services/db").getInstance();
 const Message = require("../models/message");
 const openAi = require("../api/openai");
+
 //Controlleur pour récupérer un message par l'ID de la discussion
 exports.getMessagesByDiscussion = (req, res) => {
   const id = parseInt(req.params.id);
