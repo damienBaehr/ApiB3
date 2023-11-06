@@ -27,8 +27,8 @@ async function generateAnswer(id) {
           rows.forEach((row) => {
             let i = 0;
             const prefix = "";
-            i == 0 ? prefix = "Bonsoir C'est moiiiii" : prefix = "";
-            const statusMessage = i++%2 == 0 ? "user" : "bot";
+            if (i === 0) prefix === "MESSAGE A METTRE AU DEBUT POUR QU'IL COMPRENNE LE TON DU PERSONNAGE";
+            const statusMessage = i++%2 == 0 ? "user" : "assistant";
             const text = prefix + row.text
             const message = {
                 role: statusMessage,

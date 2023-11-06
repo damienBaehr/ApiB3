@@ -25,23 +25,27 @@ exports.createMessageByDiscussion = (req, res) => {
   message.messageDate();
   const sql = "INSERT INTO message (date, text, id_discussion) VALUES (?, ?, ?)";
   const values = [message.date, message.text, id];
-
+  
   conn.query(sql, values, async (err, result) => {
     if (err || result.affectedRows === 0) {
       res.status(500).json({ error: "Erreur lors de la création du message", err });
     }
     message.id = result.insertId;
+    
+    const answer = await openAi.generateAnswer(id);
+    
+    const textResponse = answer.choices[0].message.content;
 
-    const answer = await openAi.generateAnswer(21);
-    const sql = "INSERT INTO message (date, text, id_discussion) VALUES (?, ?, ?)";
-    const values = [message.date, answer, id];
+    const sql2 = "INSERT INTO message (date, text, id_discussion) VALUES (NOW(), ?, ?)";
+    const values2 = [textResponse, id];
 
-    conn.query(sql, values, async (err, result) => {
-      if (err || result.affectedRows === 0) {
-        res.status(500).json({ error: "Erreur lors de la création du message", err });
+    conn.query(sql2, values2, async (err2, result2) => {
+      if (err2 || result.affectedRows === 0) {
+        res.status(500).json({ error: "Erreur lors de la création du message de réponse", err2});
       }
-      message.id = result.insertId;
+      let id2 = result2.insertId;
+
+      res.status(201).json({ myMessage : message.toMap(), id: id2, content: textResponse });
     });
-    res.status(201).json({ message: message.toMap(), aswner: answer.choices[0].message });
   });
 };

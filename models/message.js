@@ -18,13 +18,11 @@ class Message {
     toMap(){
       return {
         id: this.id,
-        date: this.date,
+        // date: this.date,
         text: this.text,
         id_discussion: this.id_discussion
       }
     }
-    //Créer une date quand la méthode est appelée
-
     messageDate(){
       this.date = new Date();
     }
