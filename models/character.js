@@ -33,16 +33,14 @@ class Character {
     async generateDescription(){
       const prompt = `Génère moi la description du personnage : "${this._name}"}`;
       let response = await generateDescription(prompt);
-
-      console.log("Test response", response);
       this._description = response.choices[0].text;
-
     }
 
     async generateImage(){
       const prompt = `Génère moi un logo pour le personnage : "${this._name}"}. Il faudrait avoir son visage en portrait.`;
-      const imageName = "character_" + this._name + "_image";
-      const response = await generateImage(imageName, prompt);
+      const imageName = "character_" + this._name + "_image"; 
+      let universeFolder = "Marvel";
+      const response = await generateImage(imageName, prompt, universeFolder );
       this._imgPathUrl = response ? response : "PATH FOIREUX";
     }
 }

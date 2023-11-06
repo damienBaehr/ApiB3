@@ -39,10 +39,11 @@ class Universe {
     }
 
     async generateImage(){
+
       let prompt = "Génère moi une image pour l'univers : " + this.name + ".";
-      const imageName = "universe_" + this.name + "_image";
-      
-      let response = await generateImage(imageName, prompt);
+      const imageName = "universe_" + this.name + "_image";      
+      let response = await generateImage(imageName, prompt, universeFolder);
+      console.log("Universe Folder Name: " + this.name);
 
       this.imgPathUrl = response ? response : "PATH FOIREUX";    
     }
