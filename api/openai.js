@@ -1,5 +1,5 @@
 const OpenAI = require("openai");
-const conn = require("../services/db");
+const conn = require("../services/db").getInstance();
 const dotenv = require("dotenv");
 
 dotenv.config({ path: ".env.local" });

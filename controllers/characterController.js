@@ -1,4 +1,4 @@
-const conn = require("../services/db");
+const conn = require("../services/db").getInstance();
 const Character = require("../models/character");
 
 // Contrôleur pour récupérer tous les personnages d'un univers
@@ -14,9 +14,7 @@ exports.getCharactersByUniverse = (req, res) => {
     } else if (results.length > 0) {
       res.status(200).json({ characters: results });
     } else {
-      res
-        .status(404)
-        .json({ message: "Aucun personnage trouvé pour cet univers_id" });
+      res.status(404).json({ message: "Aucun personnage trouvé pour cet univers_id" });
     }
   });
 };
@@ -28,10 +26,13 @@ exports.createCharacter = async (req, res) => {
 
   try {
     let character = Character.fromMap(req.body);
+    const pathImage = "character_" + character._name + "_image" ;
+
     await character.generateDescription();
-    await character.generateImage();
+
+    character.generateImage();
     const sql ="INSERT INTO personnage (name, description, imgPathUrl, univers_id, id_user) VALUES ( ?, ?, ?, ?, ?)";
-    const values = [character._name, character._description, character._imgPathUrl, univers_id, id_user];
+    const values = [character._name, character._description, pathImage, univers_id, id_user];
 
     conn.query(sql, values, (err, result) => {
       if (err || result.length <= 0) {

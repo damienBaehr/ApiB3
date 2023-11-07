@@ -2,7 +2,7 @@ const generateImage = require('../api/stableDiffusion.js');
 
 class User {
     constructor(id, pseudo, password, email) {
-      this._id = id; // Utilisation du préfixe _ pour indiquer que ce sont des propriétés privées
+      this._id = id;
       this._pseudo = pseudo;
       this._password = password;
       this._email = email;

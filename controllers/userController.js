@@ -1,4 +1,4 @@
-const conn = require('../services/db')
+const conn = require('../services/db').getInstance();
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 const User = require('../models/user');

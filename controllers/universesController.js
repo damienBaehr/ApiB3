@@ -1,4 +1,4 @@
-const conn = require('../services/db');
+const conn = require('../services/db').getInstance();
 const Universe = require('../models/universes');
 
 // Contrôleur pour créer un univers
@@ -51,7 +51,6 @@ exports.getUniverseById = (req, res) => {
     } else {
       res.status(200).json(result[0]);
     }
-    console.log("Test result[0]",result[0])
   });
 };
 

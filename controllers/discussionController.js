@@ -1,4 +1,4 @@
-const conn = require("../services/db");
+const conn = require("../services/db").getInstance();
 const Discussion = require("../models/discussion");
 
 // Contrôleur pour créer une discussion
