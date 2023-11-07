@@ -12,12 +12,15 @@ const messageRoutes = require("./routes/messageRoutes")
 const verifyToken = require("./middlewares/verifyToken"); 
 
 // Utilisation des routes
-app.use(verifyToken); // middleware pour vérifier le token  A DECOMMENTER !!!!!!!!!!!
+app.use(verifyToken);
 app.use("/user", userRoutes); // préfixe "/user" pour les routes des utilisateurs
 app.use("/universes", universesRoutes); // préfixe "/universes" pour les routes des univers
 app.use("/discussion", discussionRoutes); // préfixe "/discussion" pour les routes des discussions
 app.use("/character", characterRoutes); // préfixe /character pour les routes des characters
 app.use("/message", messageRoutes); // préfixe /message pour les routes des messages
+
+// Création multiple : Univers + liste de string (string + [string] ) = façade
+
 
 app.listen(8080, () => {
   console.log("Server running on port 8080!");

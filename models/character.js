@@ -1,7 +1,5 @@
 const {generateDescription} = require("../api/openai");
 const {generateImage}= require("../api/stableDiffusion");
-const Univers = require("./universes");
-const conn = require("../services/db").getInstance();
 
 class Character {
   constructor(name) {
@@ -31,7 +29,7 @@ class Character {
         id_user: this._id_user
       }
     }
-
+    
     async generateDescription(){
       const prompt = `Génère moi la description du personnage : "${this._name}"}`;
       let response = await generateDescription(prompt);
