@@ -81,12 +81,7 @@ exports.updateCharacter = (req, res) => {
       if (result.affectedRows > 0) {
         res.status(200).json(character.toMap());
       } else {
-        res
-          .status(404)
-          .json({
-            error: "L'univers avec l'ID spécifié n'a pas été trouvé",
-            err,
-          });
+        res.status(404).json({ error: "L'univers avec l'ID spécifié n'a pas été trouvé", err,});
       }
     }
   });

@@ -8,12 +8,15 @@ exports.createUniverse = async (req, res) => {
 
   try {
     await universe.generateDescription();
-    await universe.generateImage();
+    
+    const pathImage = "universe_" + universe.name + "_image" ;
+    
+    universe.generateImage();
 
     console.log("Test description", universe.description);
     const sql = "INSERT INTO univers (name, description, imgPathUrl, id_user) VALUES (?, ?, ?, ?)";
 
-    const values = [universe.name, universe.description, universe.imgPathUrl, id_user];
+    const values = [universe.name, universe.description, pathImage, id_user];
 
     conn.query(sql, values, (err, result) => {
       if (err) {

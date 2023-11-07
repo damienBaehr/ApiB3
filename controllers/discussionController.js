@@ -10,17 +10,12 @@ exports.createDiscussion = async (req, res) => {
 
   try {
     await discussion.generateDescription();
-    await discussion.generateImage();
+    const pathImage = "bgDiscussion_" + discussion.name + "_image" ;
+    discussion.generateImage();
     const sql =
       "INSERT INTO discussion (name, description, imgUrl, id_personnage, id_user) VALUES (?, ?, ?, ?, ?)";
 
-    const values = [
-      discussion.name,
-      discussion.description,
-      discussion.imgUrl,
-      id_personnage,
-      id_user,
-    ];
+    const values = [discussion.name,discussion.description,pathImage,id_personnage,id_user,];
 
     conn.query(sql, values, (err, result) => {
       if (err || result.length <= 0) {

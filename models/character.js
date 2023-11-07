@@ -1,5 +1,7 @@
 const {generateDescription} = require("../api/openai");
 const {generateImage}= require("../api/stableDiffusion");
+const Univers = require("./universes");
+const conn = require("../services/db").getInstance();
 
 class Character {
   constructor(name) {
@@ -39,7 +41,7 @@ class Character {
     async generateImage(){
       const prompt = `Génère moi un logo pour le personnage : "${this._name}"}. Il faudrait avoir son visage en portrait.`;
       const imageName = "character_" + this._name + "_image"; 
-      let universeFolder = "Marvel";
+      let universeFolder = this._name;
       const response = await generateImage(imageName, prompt, universeFolder );
       this._imgPathUrl = response ? response : "PATH FOIREUX";
     }

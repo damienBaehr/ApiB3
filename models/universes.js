@@ -40,8 +40,9 @@ class Universe {
 
     async generateImage(){
 
-      let prompt = "Génère moi une image pour l'univers : " + this.name + ".";
-      const imageName = "universe_" + this.name + "_image";      
+      let prompt = "Génère moi une image pour l'univers de : " + this.name + ". Il faut une belle image, qui représente bien l'univers. ";
+      const imageName = "universe_" + this.name + "_image"; 
+      let universeFolder = this.name;    
       let response = await generateImage(imageName, prompt, universeFolder);
       console.log("Universe Folder Name: " + this.name);
 
