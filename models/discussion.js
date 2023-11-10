@@ -36,8 +36,6 @@ class Discussion {
     async generateDescription(){
       const prompt = `Génère moi une description pour une discussion, qui a "${this.id_personnage}" comme personnage. La discussion peut-être dans l'univers d'une série, ou d'un film, ou d'un jeu vidéo. La discussion s'appelle : "${this.name}`;
       let response = await generateDescription(prompt);
-      
-      console.log("Test response", response);
       this.description = response.choices[0].text;
 
     }

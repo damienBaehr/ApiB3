@@ -3,6 +3,8 @@ const dontenv = require("dotenv");
 dontenv.config({ path: ".env.local" });
 const apiKey = process.env.CLIPDROP_API_KEY;
 
+
+
 async function generateImage(imageName, prompt, universeFolder) {
     return new Promise(async (resolve, reject) => {
       let stableDiffusionUrl = "https://clipdrop-api.co/text-to-image/v1";

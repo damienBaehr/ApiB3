@@ -33,18 +33,15 @@ class Universe {
     async generateDescription(){
       const prompt = `Génère moi une description pour l'univers de  "${this.name}". Par exemple, raconte moi son histoire, ou un résumé de ce que c'est. Il ne faut pas que ça fasse plus de 150 mots.`;
       let response = await generateDescription(prompt);
-
-      console.log("Test response", response);
-      this.description = response.choices[0].text;
+      this.description = response.choices[0].text.trim();
     }
 
-    async generateImage(){
+    async generateImage(name){
 
-      let prompt = "Génère moi une image pour l'univers de : " + this.name + ". Il faut une belle image, qui représente bien l'univers. ";
-      const imageName = "universe_" + this.name + "_image"; 
-      let universeFolder = this.name;    
+      let prompt = "Génère moi une image pour l'univers de : " + name + ". Il faut une belle image, qui représente bien l'univers. ";
+      const imageName = "universe_" + name + "_image"; 
+      let universeFolder = name;    
       let response = await generateImage(imageName, prompt, universeFolder);
-      console.log("Universe Folder Name: " + this.name);
 
       this.imgPathUrl = response ? response : "PATH FOIREUX";    
     }

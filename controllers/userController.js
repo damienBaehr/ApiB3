@@ -1,4 +1,5 @@
-const conn = require('../services/db').getInstance();
+const ConnFactory = require("../services/db");
+const conn = ConnFactory.createInstance();
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 const User = require('../models/user');
@@ -81,7 +82,6 @@ exports.getUserById = (req, res) => {
       res.status(500).json({ error: "Erreur lors de la récupération de l'utilisateur" });
     } else {
       res.status(200).json({ user: result[0] });
-      console.log(result[0]);
     }
   });
 };

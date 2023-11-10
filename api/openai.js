@@ -1,5 +1,6 @@
 const OpenAI = require("openai");
-const conn = require("../services/db").getInstance();
+const ConnFactory = require("../services/db");
+const conn = ConnFactory.createInstance();
 const dotenv = require("dotenv");
 
 dotenv.config({ path: ".env.local" });
@@ -70,7 +71,7 @@ async function generateDescription(prompt) {
         model: "gpt-3.5-turbo-instruct",
         prompt: prompt,
         temperature: 1,
-        max_tokens: 256,
+        max_tokens: 300,
         top_p: 1,
         frequency_penalty: 0,
         presence_penalty: 0,
@@ -78,7 +79,7 @@ async function generateDescription(prompt) {
 
       resolve(response);
     } catch (error) {
-      reject(error);
+      reject(false);
     }
   });
 }

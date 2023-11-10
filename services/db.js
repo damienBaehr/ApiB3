@@ -40,5 +40,11 @@ class Conn {
   }
 }
 
+class ConnFactory {
+  static createInstance() {
+    return new Conn();
+  }
+}
 
-module.exports = Conn;
+
+module.exports = ConnFactory;

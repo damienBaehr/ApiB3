@@ -1,4 +1,5 @@
-const conn = require("../services/db").getInstance();
+const ConnFactory = require("../services/db");
+const conn = ConnFactory.createInstance();
 const Discussion = require("../models/discussion");
 
 // Contrôleur pour créer une discussion
@@ -9,7 +10,13 @@ exports.createDiscussion = async (req, res) => {
   let discussion = Discussion.fromMap(req.body);
 
   try {
-    await discussion.generateDescription();
+    if(await discussion.generateDescription() == false){
+      res.status(504).json("Service de génération non disponible.");
+    }
+    if(await discussion.generateDescription() == false){
+      res.status(504).json("Service de génération non disponible.");
+    }
+
     const pathImage = "bgDiscussion_" + discussion.name + "_image" ;
     discussion.generateImage();
     const sql =

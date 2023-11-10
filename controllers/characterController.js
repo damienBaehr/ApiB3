@@ -1,5 +1,7 @@
-const conn = require("../services/db").getInstance();
+const ConnFactory = require("../services/db");
+const conn = ConnFactory.createInstance();
 const Character = require("../models/character");
+const characterFacade = require("../controllers/characterFacade");
 
 // Contrôleur pour récupérer tous les personnages d'un univers
 exports.getCharactersByUniverse = (req, res) => {
@@ -21,70 +23,40 @@ exports.getCharactersByUniverse = (req, res) => {
 
 // Contrôleur pour créer un personnage
 exports.createCharacter = async (req, res) => {
-  const id_user = req.get("X-UserID");
-  const univers_id = req.get("X-UniversID");
-
   try {
-    let character = Character.fromMap(req.body);
-    const pathImage = "character_" + character._name + "_image" ;
+    const univers_id = req.get("X-UniversID");
+    await characterFacade.createCharacter( univers_id, req.body.name , null,req,res);
+    
+  } catch (error) {
+    console.log(error);
+    res.status(500).json("Erreur lors de la création du personnage");
+  }
+};
 
-    await character.generateDescription();
-
-    character.generateImage();
-    const sql ="INSERT INTO personnage (name, description, imgPathUrl, univers_id, id_user) VALUES ( ?, ?, ?, ?, ?)";
-    const values = [character._name, character._description, pathImage, univers_id, id_user];
-
-    conn.query(sql, values, (err, result) => {
-      if (err || result.length <= 0) {
-        res.status(500).json({ error: "Erreur lors de la création du personnage", err });
-      } else {
-        character._id = result.insertId;
-        res.status(201).json({ character: character.toMap() });
-      }
-    });
-  } catch {
-    res.status(500).json({error: "Erreur lors de la génération de la description du personnage"});
+exports.createUniverseAndCharacters = async (req, res) => {
+  try {
+    await characterFacade.createUniverseAndCharacters(req, res);
+    // res.status(201).json(result);
+  } catch (error) {
+    // res.status(500).json("erreur lors de la création du personnage et de l'univers)");
   }
 };
 
 // Contrôleur pour mettre à jour un personnage
-exports.updateCharacter = (req, res) => {
-  const universId = req.params.id;
-  let character = Character.fromMap(req.body);
-  const columns = [];
-  const values = [];
+exports.updateCharacter = async (req, res) => {
+  const characterId = req.params.id;
+  const characterData = Character.fromMap(req.body);
 
-  if (character._name) {
-    columns.push("name = ?");
-    values.push(character._name);
-  }
-  if (character._description) {
-    columns.push("description = ?");
-    values.push(character._description);
-  }
-  if (character._imgPathUrl) {
-    columns.push("imgPathUrl = ?");
-    values.push(character._imgPathUrl);
-  }
-  if (character._id_user) {
-    columns.push("id_character = ?");
-    values.push(character._id_user);
-  }
-  let sql = "UPDATE personnage SET " + columns.join(", ") + " WHERE id = ?";
-  values.push(universId);
-  conn.query(sql, values, (err, result) => {
-    if (err) {
-      res
-        .status(500)
-        .json({ error: "Erreur lors de la mise à jour de l'univers" });
-    } else {
-      if (result.affectedRows > 0) {
-        res.status(200).json(character.toMap());
-      } else {
-        res.status(404).json({ error: "L'univers avec l'ID spécifié n'a pas été trouvé", err,});
-      }
+  try {
+    const result = await characterFacade.updateCharacter(characterId, characterData, res);
+    if (result.error) {
+      res.status(404).json(result.error);
     }
-  });
+    res.status(200).json(result.character);
+  } catch (error) {
+    console.log(error)
+    res.status(500).json(error);
+  }
 };
 
 // Contrôleur pour supprimer un personnage par son ID
