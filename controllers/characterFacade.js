@@ -1,5 +1,4 @@
-const ConnFactory = require("../services/db");
-const conn = ConnFactory.createInstance();
+const conn = require("../services/db").getInstance();
 const Character = require("../models/character");
 const universeFacade = require("../controllers/universesFacade");
 const CharacterCreationObserver = require("../observers/characterCreationObserver");

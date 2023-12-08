@@ -1,5 +1,4 @@
-const ConnFactory = require("../services/db");
-const conn = ConnFactory.createInstance();
+const conn = require("../services/db").getInstance();
 const Message = require("../models/message");
 const openAi = require("../api/openai");
 

@@ -1,5 +1,4 @@
 const mysql = require('mysql2');
-
 class Conn {
 
   static instance;
@@ -39,12 +38,4 @@ class Conn {
     });
   }
 }
-
-class ConnFactory {
-  static createInstance() {
-    return new Conn();
-  }
-}
-
-
-module.exports = ConnFactory;
+module.exports = Conn;
